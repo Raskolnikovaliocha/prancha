@@ -71,7 +71,7 @@ if imagens:
          "Inferior esquerdo", "Inferior direito"]
     )
 
-    tamanho_letra = st.slider("Tamanho da letra", 20, 80, 40)
+    tamanho_letra = st.slider("Tamanho da letra", 20, 100, 40)
 
     prancha = montar_prancha(
         imagens,
