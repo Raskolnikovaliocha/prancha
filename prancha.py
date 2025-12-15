@@ -77,12 +77,12 @@ if len(imagens) > 0 : # me refiro ao número de imagens
         return prancha
 
 
-   prancha = montar_prancha(
-    imagens,
-    n_col,
-    margem,
-    posicao_letra,
-    tamanho_letra)
+       prancha = montar_prancha(
+        imagens,
+        n_col,
+        margem,
+        posicao_letra,
+        tamanho_letra)
 
     st.image(prancha, caption="Prancha final", use_container_width=True)
 
