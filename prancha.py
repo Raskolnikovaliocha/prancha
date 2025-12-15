@@ -19,14 +19,14 @@ if len(imagens) > 0 : # me refiro ao número de imagens
     tamanho_letra = st.slider("Tamanho da letra", 20, 80, 40)
 
     def calcular_posicao_texto(posicao, x_img, y_img, largura, altura, offset=10):
-    if posicao == "Superior esquerdo":
-        return x_img + offset, y_img + offset
-    elif posicao == "Superior direito":
-        return x_img + largura - offset, y_img + offset
-    elif posicao == "Inferior esquerdo":
-        return x_img + offset, y_img + altura - offset
-    else:  # Inferior direito
-        return x_img + largura - offset, y_img + altura - offset
+        if posicao == "Superior esquerdo":
+            return x_img + offset, y_img + offset
+        elif posicao == "Superior direito":
+            return x_img + largura - offset, y_img + offset
+        elif posicao == "Inferior esquerdo":
+            return x_img + offset, y_img + altura - offset
+        else:  # Inferior direito
+            return x_img + largura - offset, y_img + altura - offset
 
 
 
