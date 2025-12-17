@@ -123,7 +123,7 @@ if imagens:
     proporcao_letra = st.slider(
         "Tamanho da letra (proporção da figura)",
         min_value=0.05,
-        max_value=0.25,
+        max_value=1,
         value=0.12,
         step=0.01
     )
