@@ -44,8 +44,13 @@ def calcular_posicao_texto(posicao, x_img, y_img, largura, altura, margem):
         return (x_img + largura - margem, y_img + altura - margem), "rd"
 
 
-def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra):
-    imgs = [Image.open(img).convert("RGB") for img in imagens]
+def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largura_padrao, altura_padrao):
+    imgs = [
+    Image.open(img)
+    .convert("RGB")
+    .resize((largura_padrao, altura_padrao), Image.LANCZOS)
+    for img in imagens]
+
 
     largura_max = max(img.width for img in imgs)
     altura_max = max(img.height for img in imgs)
@@ -127,12 +132,38 @@ if imagens:
 
     st.caption("Ex.: 0.20 → letra ocupa ~20% da altura da figura")
 
+    st.subheader("Configurações do layout")
+
+    st.subheader("Dimensões dos painéis")
+
+    largura_padrao = st.number_input(
+        "Largura do painel (px)",
+        min_value=400,
+        max_value=3000,
+        value=1200,
+        step=50
+    )
+    
+    altura_padrao = st.number_input(
+        "Altura do painel (px)",
+        min_value=400,
+        max_value=3000,
+        value=1600,
+        step=50
+    )
+
+
+
+    
+
     prancha = montar_prancha(
         imagens,
         n_col,
         margem,
         posicao_letra,
-        proporcao_letra
+        proporcao_letra, 
+        largura_padrao,
+        altura_padrao
     )
 
     st.image(prancha, caption="Prancha final", use_container_width=True)
