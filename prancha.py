@@ -32,16 +32,16 @@ def carregar_fonte(tamanho):
 
 def calcular_posicao_texto(posicao, x_img, y_img, largura, altura, margem):
     if posicao == "Superior esquerdo":
-        return (x_img + margem, y_img + margem), "la"
+        return (x_img + margem, y_img + margem), "lt"
 
     elif posicao == "Superior direito":
-        return (x_img + largura - margem, y_img + margem), "ra"
+        return (x_img + largura - margem, y_img + margem), "rt"
 
     elif posicao == "Inferior esquerdo":
-        return (x_img + margem, y_img + altura - margem), "ld"
+        return (x_img + margem, y_img + altura - margem), "lb"
 
     else:  # Inferior direito
-        return (x_img + largura - margem, y_img + altura - margem), "rd"
+        return (x_img + largura - margem, y_img + altura - margem), "rb"
 
 
 def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largura_padrao, altura_padrao):
