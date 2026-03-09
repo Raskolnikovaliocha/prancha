@@ -56,7 +56,7 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
     altura_max = max(img.height for img in imgs)
 
     # 🔥 TAMANHO REAL DA LETRA (PROPORCIONAL À FIGURA)
-    tamanho_letra = max(20, int(altura_max * proporcao_letra))#tamanho_letra = int(altura_max * proporcao_letra)
+    tamanho_letra = max(40, int(altura_max * proporcao_letra * 1.8))#tamanho_letra = int(altura_max * proporcao_letra)
     margem_texto = int(tamanho_letra * 0.3)
 
     fonte = carregar_fonte(tamanho_letra)
