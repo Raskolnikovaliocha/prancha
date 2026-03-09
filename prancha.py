@@ -166,7 +166,7 @@ if imagens:
         altura_padrao
     )
 
-    st.image(prancha, caption="Prancha final", use_container_width=True)
+    st.image(prancha, caption="Prancha final")#use_container_width=True
 
     # =========================
     # DOWNLOAD
