@@ -125,9 +125,9 @@ if imagens:
     proporcao_letra = st.slider(
         "Tamanho da letra (proporção da altura da figura)",
         min_value=0.025,#0.05
-        max_value=0.50,
+        max_value=1,
         value=0.18,
-        step=0.01
+        step=0.02
     )
 
     st.caption("Ex.: 0.20 → letra ocupa ~20% da altura da figura")
