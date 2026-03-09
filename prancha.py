@@ -96,6 +96,7 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
             letra,
             fill="black",
             font=fonte
+            anchor=anchor
             
         )
 
