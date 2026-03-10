@@ -23,7 +23,6 @@ imagens = st.file_uploader(
 # FUNÇÕES
 # =========================
 def carregar_fonte(tamanho):
-    # Fonte garantida no PIL / Streamlit Cloud
     try:
         return ImageFont.truetype("DejaVuSans-Bold.ttf", tamanho)
     except:
@@ -31,6 +30,7 @@ def carregar_fonte(tamanho):
 
 
 def calcular_posicao_texto(posicao, x_img, y_img, largura, altura, margem):
+
     if posicao == "Superior esquerdo":
         return (x_img + margem, y_img + margem), "lt"
 
@@ -40,24 +40,44 @@ def calcular_posicao_texto(posicao, x_img, y_img, largura, altura, margem):
     elif posicao == "Inferior esquerdo":
         return (x_img + margem, y_img + altura - margem), "lb"
 
-    else:  # Inferior direito
+    else:
         return (x_img + largura - margem, y_img + altura - margem), "rb"
 
 
+def gerar_letras(n):
+
+    letras = list(string.ascii_uppercase)
+
+    if n <= 26:
+        return letras[:n]
+
+    lista = []
+    for i in range(n):
+        if i < 26:
+            lista.append(letras[i])
+        else:
+            lista.append("A" + letras[i-26])
+
+    return lista
+
+
 def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largura_padrao, altura_padrao):
+
     imgs = [
-    Image.open(img)
-    .convert("RGB")
-    .resize((largura_padrao, altura_padrao), Image.LANCZOS)
-    for img in imagens]
+        Image.open(img)
+        .convert("RGB")
+        .resize((largura_padrao, altura_padrao), Image.LANCZOS)
+        for img in imagens
+    ]
 
+    largura_max = largura_padrao
+    altura_max = altura_padrao
 
-    largura_max = max(img.width for img in imgs)
-    altura_max = max(img.height for img in imgs)
+    # tamanho da letra proporcional
+    tamanho_letra = int(altura_max * proporcao_letra)
 
-    # 🔥 TAMANHO REAL DA LETRA (PROPORCIONAL À FIGURA)
-    tamanho_letra = max(40, int(altura_max * proporcao_letra * 1.8))#tamanho_letra = int(altura_max * proporcao_letra)
-    margem_texto = int(tamanho_letra * 0.3)
+    # margem da letra
+    margem_texto = int(tamanho_letra * 0.15)
 
     fonte = carregar_fonte(tamanho_letra)
 
@@ -69,9 +89,10 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
     prancha = Image.new("RGB", (largura_final, altura_final), "white")
     draw = ImageDraw.Draw(prancha)
 
-    letras = list(string.ascii_uppercase)
+    letras = gerar_letras(len(imgs))
 
     for i, img in enumerate(imgs):
+
         linha = i // n_col
         coluna = i % n_col
 
@@ -97,7 +118,6 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
             fill="black",
             font=fonte,
             anchor=anchor
-            
         )
 
     return prancha
@@ -111,7 +131,13 @@ if imagens:
     st.subheader("Configurações do layout")
 
     n_col = st.slider("Número de colunas", 1, 6, 2)
-    margem = st.slider("Margem entre figuras (px)", 0, 150, 30)
+
+    margem = st.slider(
+        "Margem entre figuras (px)",
+        0,
+        150,
+        30
+    )
 
     posicao_letra = st.selectbox(
         "Posição das letras",
@@ -125,15 +151,13 @@ if imagens:
 
     proporcao_letra = st.slider(
         "Tamanho da letra (proporção da altura da figura)",
-        min_value=0.05,#0.05
+        min_value=0.05,
         max_value=0.25,
         value=0.12,
         step=0.01
     )
 
-    st.caption("Ex.: 0.20 → letra ocupa ~20% da altura da figura")
-
-    st.subheader("Configurações do layout")
+    st.caption("Ex.: 0.12 → letra ocupa ~12% da altura da figura")
 
     st.subheader("Dimensões dos painéis")
 
@@ -144,7 +168,7 @@ if imagens:
         value=1200,
         step=50
     )
-    
+
     altura_padrao = st.number_input(
         "Altura do painel (px)",
         min_value=400,
@@ -153,26 +177,22 @@ if imagens:
         step=50
     )
 
-
-
-    
-
     prancha = montar_prancha(
         imagens,
         n_col,
         margem,
         posicao_letra,
-        proporcao_letra, 
+        proporcao_letra,
         largura_padrao,
         altura_padrao
     )
 
-    st.image(prancha, caption="Prancha final")#use_container_width=True
+    st.image(prancha, caption="Prancha final")
 
     # =========================
     # DOWNLOAD
     # =========================
-    prancha.save("prancha_final.png", dpi=(300, 300))
+    prancha.save("prancha_final.png", dpi=(300,300))
 
     with open("prancha_final.png", "rb") as f:
         st.download_button(
