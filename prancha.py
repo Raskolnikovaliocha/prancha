@@ -14,6 +14,7 @@ st.header("Construção de prancha")
 # =========================
 # UPLOAD
 # =========================
+
 imagens = st.file_uploader(
     "Carregue os gráficos (PNG de preferência)",
     type=["png", "jpg", "jpeg"],
@@ -25,36 +26,42 @@ imagens = st.file_uploader(
 # =========================
 
 def carregar_fonte(tamanho):
-    """
-    Garante que uma fonte TrueType seja carregada
-    """
+
     caminhos = [
         "DejaVuSans-Bold.ttf",
         "DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
     ]
 
     for caminho in caminhos:
-        if os.path.exists(caminho):
+        try:
             return ImageFont.truetype(caminho, tamanho)
+        except:
+            pass
 
-    st.error("⚠️ Fonte DejaVu não encontrada. Coloque DejaVuSans-Bold.ttf na pasta do script.")
     return ImageFont.load_default()
 
 
 def calcular_posicao_texto(posicao, x_img, y_img, largura, altura, margem):
 
     if posicao == "Superior esquerdo":
-        return (x_img + margem, y_img + margem), "lt"
+        x = x_img + margem
+        y = y_img + margem
 
     elif posicao == "Superior direito":
-        return (x_img + largura - margem, y_img + margem), "rt"
+        x = x_img + largura - margem
+        y = y_img + margem
 
     elif posicao == "Inferior esquerdo":
-        return (x_img + margem, y_img + altura - margem), "lb"
+        x = x_img + margem
+        y = y_img + altura - margem
 
     else:
-        return (x_img + largura - margem, y_img + altura - margem), "rb"
+        x = x_img + largura - margem
+        y = y_img + altura - margem
+
+    return (x, y)
 
 
 def gerar_letras(n):
@@ -66,8 +73,10 @@ def gerar_letras(n):
 
     lista = []
     for i in range(n):
+
         if i < 26:
             lista.append(letras[i])
+
         else:
             lista.append("A" + letras[i-26])
 
@@ -86,11 +95,11 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
     largura_max = largura_padrao
     altura_max = altura_padrao
 
-    # tamanho da letra proporcional
+    # tamanho da letra
     tamanho_letra = int(altura_max * proporcao_letra)
 
-    # margem da letra
-    margem_texto = int(tamanho_letra * 0.15)
+    # margem interna da letra
+    margem_texto = int(tamanho_letra * 0.6)
 
     fonte = carregar_fonte(tamanho_letra)
 
@@ -100,6 +109,7 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
     altura_final = n_linhas * altura_max + (n_linhas - 1) * margem
 
     prancha = Image.new("RGB", (largura_final, altura_final), "white")
+
     draw = ImageDraw.Draw(prancha)
 
     letras = gerar_letras(len(imgs))
@@ -116,7 +126,7 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
 
         letra = letras[i]
 
-        pos, anchor = calcular_posicao_texto(
+        pos = calcular_posicao_texto(
             posicao_letra,
             x,
             y,
@@ -129,8 +139,7 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
             pos,
             letra,
             fill="black",
-            font=fonte,
-            anchor=anchor
+            font=fonte
         )
 
     return prancha
@@ -146,7 +155,12 @@ if imagens:
 
     n_col = st.slider("Número de colunas", 1, 6, 2)
 
-    margem = st.slider("Margem entre figuras (px)", 0, 150, 30)
+    margem = st.slider(
+        "Margem entre figuras (px)",
+        0,
+        150,
+        30
+    )
 
     posicao_letra = st.selectbox(
         "Posição das letras",
@@ -199,9 +213,11 @@ if imagens:
     st.image(prancha, caption="Prancha final")
 
     # DOWNLOAD
+
     prancha.save("prancha_final.png", dpi=(300,300))
 
     with open("prancha_final.png", "rb") as f:
+
         st.download_button(
             "📥 Baixar prancha (PNG – 300 dpi)",
             f,
