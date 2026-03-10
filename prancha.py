@@ -6,6 +6,7 @@ import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 import math
 import string
+import os
 
 st.set_page_config(layout="wide")
 st.header("Construção de prancha")
@@ -22,11 +23,23 @@ imagens = st.file_uploader(
 # =========================
 # FUNÇÕES
 # =========================
+
 def carregar_fonte(tamanho):
-    try:
-        return ImageFont.truetype("DejaVuSans-Bold.ttf", tamanho)
-    except:
-        return ImageFont.load_default()
+    """
+    Garante que uma fonte TrueType seja carregada
+    """
+    caminhos = [
+        "DejaVuSans-Bold.ttf",
+        "DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+    ]
+
+    for caminho in caminhos:
+        if os.path.exists(caminho):
+            return ImageFont.truetype(caminho, tamanho)
+
+    st.error("⚠️ Fonte DejaVu não encontrada. Coloque DejaVuSans-Bold.ttf na pasta do script.")
+    return ImageFont.load_default()
 
 
 def calcular_posicao_texto(posicao, x_img, y_img, largura, altura, margem):
@@ -126,18 +139,14 @@ def montar_prancha(imagens, n_col, margem, posicao_letra, proporcao_letra, largu
 # =========================
 # INTERFACE
 # =========================
+
 if imagens:
 
     st.subheader("Configurações do layout")
 
     n_col = st.slider("Número de colunas", 1, 6, 2)
 
-    margem = st.slider(
-        "Margem entre figuras (px)",
-        0,
-        150,
-        30
-    )
+    margem = st.slider("Margem entre figuras (px)", 0, 150, 30)
 
     posicao_letra = st.selectbox(
         "Posição das letras",
@@ -151,10 +160,10 @@ if imagens:
 
     proporcao_letra = st.slider(
         "Tamanho da letra (proporção da altura da figura)",
-        min_value=0.05,
-        max_value=0.25,
-        value=0.12,
-        step=0.01
+        0.05,
+        0.25,
+        0.12,
+        0.01
     )
 
     st.caption("Ex.: 0.12 → letra ocupa ~12% da altura da figura")
@@ -163,18 +172,18 @@ if imagens:
 
     largura_padrao = st.number_input(
         "Largura do painel (px)",
-        min_value=400,
-        max_value=3000,
-        value=1200,
-        step=50
+        400,
+        3000,
+        1200,
+        50
     )
 
     altura_padrao = st.number_input(
         "Altura do painel (px)",
-        min_value=400,
-        max_value=3000,
-        value=1600,
-        step=50
+        400,
+        3000,
+        1600,
+        50
     )
 
     prancha = montar_prancha(
@@ -189,9 +198,7 @@ if imagens:
 
     st.image(prancha, caption="Prancha final")
 
-    # =========================
     # DOWNLOAD
-    # =========================
     prancha.save("prancha_final.png", dpi=(300,300))
 
     with open("prancha_final.png", "rb") as f:
